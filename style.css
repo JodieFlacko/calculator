@@ -1,0 +1,37 @@
+body{
+    display: flex;
+    height: 100vh;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.calculator {
+    display: flex;
+    flex-wrap: wrap;
+    height: min(80vh, 80vw);
+    width: min(80vh, 80vw);
+}
+
+button.ctrl_btn {
+    font-size: 1rem;
+    flex: 1 1 25%;
+}
+
+button.ctrl_btn.double {
+    flex: 1 1 50%;
+}
+
+div.display {
+    box-sizing: border-box;
+    border: 0.1rem solid black;
+    flex: 1 1 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0;
+    padding: 0 2rem;
+    font-size: 3rem;
+}
