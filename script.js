@@ -1,7 +1,5 @@
 function operate(x, y, op){
   let result;
-  console.log(x)
-  console.log(y)
   switch(op){
     case " + ": result = add(y, x);
     break;
@@ -12,9 +10,8 @@ function operate(x, y, op){
     case " x ": result = multiply(y, x);
     break;
   }
-  console.log(result);
-  num2 = result;
-  operator.signal = 0; 
+  console.log(result)
+  secondOperand = result;
 }
 function add(x, y) {
   return x + y;
@@ -41,46 +38,73 @@ function clearCalculator(x, y){
 }
 
 // Display functions
-const ctrl_btns = document.querySelectorAll(".ctrl_btn");
+const ctrl_btns = document.querySelectorAll(".ctrl_btn.digit");
 const ctrl_operators = document.querySelectorAll(".ctrl_btn.operator");
 // Calculator variables
-let num1, num2, operator, multiplier, numbers;
+let firstOperand, secondOperand, operator, multiplier, numbers, lastValue, symbols;
+symbols = [" + ", " x ", " - ", " ÷ "  ];
+lastValue = 0;
 numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-num1 = 0
+firstOperand = 0
 multiplier = 1;
-operator = {
-  symbol: '',
-  signal: 0,
-}
-
+operator = '';
+// for each digit clicked, updateDisplay
 ctrl_btns.forEach(btn => {
   btn.addEventListener("click", btn => {
-    showDigits(btn.target.getAttribute("value"));
+    updateDisplay(btn.target.getAttribute("value"));
   });
 });
 
 ctrl_operators.forEach(btn => {
   btn.addEventListener("click", btn => {
-    if(operator.signal > 0) operate(num1, num2, operator.symbol);
-    else {
-      operator.symbol = btn.target.getAttribute("value");
-      num2 = num1;
-      operator.signal++;
-      multiplier = 1;
-      num1 = 0;
+    const operatorSymbol = btn.target.getAttribute("value");
+    
+    // change operator when an operator has already been clicked and displayed  
+    if(!numbers.includes(lastValue)) {
+      if(lastValue != operatorSymbol){
+        operator = operatorSymbol;
+        changeOperator(operator);
+      }
+      return;
     }
+    updateDisplay(operatorSymbol);
+    if(operator === '') {
+      secondOperand = firstOperand;
+
+    }
+    else {
+      operate(firstOperand, secondOperand, operator);
+    }
+    operator = btn.target.getAttribute("value");
+    // reset firstOperand
+    multiplier = 1;
+    firstOperand = 0; 
+    lastValue = btn.target.getAttribute("value");
   });
 });
 
-function showDigits(value){
+function updateDisplay(value){
   const display = document.querySelector(".display");
+  // empty display
   if(display.textContent === '0')  display.textContent = '';
+  // update display
   display.textContent += value;
-  // saving the current value
+  // saving the current value as firstOperand
     if(numbers.includes(+value))
     {
-    num1 += (+value * multiplier);
+    firstOperand = ((+value * multiplier) + firstOperand);
     multiplier *= 10;
-  }
+    lastValue = +value;
+    }
+}
+
+function changeOperator(op){
+  const display = document.querySelector(".display");
+  displayTextContent = display.textContent;
+  displayTextContent = displayTextContent.split('');
+  displayTextContent.splice(-3,3, op);
+  displayTextContent = displayTextContent.join('');
+  lastValue = op;
+  display.textContent = displayTextContent;
 }
   
