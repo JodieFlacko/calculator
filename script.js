@@ -1,7 +1,5 @@
-// Calculator variables
-let num1, num2, operator;
 function operate(num1, num2, operator){
-  return add(num1, num2);
+  
 }
 function add(x, y) {
   return x + y;
@@ -24,10 +22,23 @@ function modulo(x, y){
 }
 
 function clearCalculator(x, y){
-  return 0;
+  return 0; 
 }
 
-function equal(fn){
-  return fn;
+// Display functions
+const ctrl_digits = document.querySelectorAll(".ctrl_btn.digit");
+// Calculator variables
+let num1, num2, operator;
+ctrl_digits.forEach(btn => {
+  btn.addEventListener("click", btn => {
+    showDigits(btn.target.getAttribute("value"));
+  });
+});
+
+
+function showDigits(value){
+  const display = document.querySelector(".display");
+  if(display.textContent === '0')  display.textContent = '';
+  display.textContent += value;
 }
   
