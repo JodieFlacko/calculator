@@ -7,7 +7,7 @@ function operate(x, y, op){
     break;
     case " - ": result = subtract(y, x);
     break;
-    case " / ": result = divide(y, x);
+    case " ÷ ": result = divide(y, x);
     break;
     case " x ": result = multiply(y, x);
     break;
