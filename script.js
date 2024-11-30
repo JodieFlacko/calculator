@@ -1,17 +1,20 @@
 function operate(x, y, op){
   let result;
+  console.log(x)
+  console.log()
   switch(op){
-    case " + ": result = add(y, x);
+    case " + ": result = add(+y, +x.value);
     break;
-    case " - ": result = subtract(y, x);
+    case " - ": result = subtract(+y, +x.value);
     break;
-    case " ÷ ": result = divide(y, x);
+    case " ÷ ": result = divide(+y, +x.value);
     break;
-    case " x ": result = multiply(y, x);
+    case " x ": result = multiply(+y, +x.value);
     break;
   }
-  console.log(result)
-  secondOperand = result;
+  operator = null;
+  resetOperand(firstOperand);
+  updateDisplayDigits(result);
 }
 function add(x, y) {
   return x + y;
@@ -38,73 +41,61 @@ function clearCalculator(x, y){
 }
 
 // Display functions
+function updateDisplayDigits(value){
+  const display = document.querySelector(".display");
+  if(display.textContent === '0') display.textContent = '';
+  firstOperand.value += (+value * firstOperand.multiplier);
+  firstOperand.multiplier *= 10;
+  display.textContent = firstOperand.value;
+}
+
+function updateDisplayOperator(op) {
+  const display = document.querySelector(".display");
+  display.textContent += op;
+}  
+function updateDisplayDigits(value){
+  const display = document.querySelector(".display");
+  if(display.textContent === '0') display.textContent = '';
+  firstOperand.value += (+value * firstOperand.multiplier);
+  firstOperand.multiplier *= 10;
+  display.textContent = firstOperand.value;
+}
+
+function updateDisplayOperator(op) {
+  const display = document.querySelector(".display");
+  display.textContent += op;
+}  
+
+function resetOperand(operand){
+  operand.value = 0;
+  operand.multiplier = 1;
+  return;
+}
+
 const ctrl_btns = document.querySelectorAll(".ctrl_btn.digit");
 const ctrl_operators = document.querySelectorAll(".ctrl_btn.operator");
 // Calculator variables
-let firstOperand, secondOperand, operator, multiplier, numbers, lastValue, symbols;
-symbols = [" + ", " x ", " - ", " ÷ "  ];
-lastValue = 0;
-numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-firstOperand = 0
-multiplier = 1;
-operator = '';
+let firstOperand, secondOperand, operator;
+firstOperand = {
+  value: 0,
+  multiplier: 1,
+};
+
 // for each digit clicked, updateDisplay
 ctrl_btns.forEach(btn => {
   btn.addEventListener("click", btn => {
-    updateDisplay(btn.target.getAttribute("value"));
+    const displayValue = btn.target.getAttribute("value");
+    updateDisplayDigits(displayValue);
   });
 });
 
 ctrl_operators.forEach(btn => {
   btn.addEventListener("click", btn => {
-    const operatorSymbol = btn.target.getAttribute("value");
-    
-    // change operator when an operator has already been clicked and displayed  
-    if(!numbers.includes(lastValue)) {
-      if(lastValue != operatorSymbol){
-        operator = operatorSymbol;
-        changeOperator(operator);
-      }
-      return;
-    }
-    updateDisplay(operatorSymbol);
-    if(operator === '') {
-      secondOperand = firstOperand;
-
-    }
-    else {
-      operate(firstOperand, secondOperand, operator);
-    }
+    if(operator != undefined && operator != null) operate(firstOperand, secondOperand, operator);
+    secondOperand = firstOperand.value;
+    resetOperand(firstOperand);
     operator = btn.target.getAttribute("value");
-    // reset firstOperand
-    multiplier = 1;
-    firstOperand = 0; 
-    lastValue = btn.target.getAttribute("value");
+    updateDisplayOperator(operator);
   });
 });
 
-function updateDisplay(value){
-  const display = document.querySelector(".display");
-  // empty display
-  if(display.textContent === '0')  display.textContent = '';
-  // update display
-  display.textContent += value;
-  // saving the current value as firstOperand
-    if(numbers.includes(+value))
-    {
-    firstOperand = ((+value * multiplier) + firstOperand);
-    multiplier *= 10;
-    lastValue = +value;
-    }
-}
-
-function changeOperator(op){
-  const display = document.querySelector(".display");
-  displayTextContent = display.textContent;
-  displayTextContent = displayTextContent.split('');
-  displayTextContent.splice(-3,3, op);
-  displayTextContent = displayTextContent.join('');
-  lastValue = op;
-  display.textContent = displayTextContent;
-}
-  
