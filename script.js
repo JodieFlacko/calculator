@@ -1,19 +1,16 @@
 function operate(x, y, op){
-  let result;
-  console.log(x)
-  console.log()
   switch(op){
-    case " + ": result = add(+y, +x.value);
+    case " + ": result = add(y, x);
     break;
-    case " - ": result = subtract(+y, +x.value);
+    case " - ": result = subtract(y, x);
     break;
-    case " ÷ ": result = divide(+y, +x.value);
+    case " ÷ ": result = divide(y, x);
     break;
-    case " x ": result = multiply(+y, +x.value);
+    case " x ": result = multiply(y, x);
     break;
   }
-  operator = null;
-  resetOperand(firstOperand);
+  lastValue = null;
+  secondOperand = result;
   updateDisplayDigits(result);
 }
 function add(x, y) {
@@ -42,58 +39,59 @@ function clearCalculator(x, y){
 
 // Display functions
 function updateDisplayDigits(value){
-  const display = document.querySelector(".display");
-  if(display.textContent === '0') display.textContent = '';
-  firstOperand.value += (+value * firstOperand.multiplier);
-  firstOperand.multiplier *= 10;
-  display.textContent = firstOperand.value;
+  let display = document.querySelector(".display");
+  if(lastValue === undefined || lastValue === null) {
+    display.textContent = value;
+    lastValue = +value;
+  }
+  else{
+    lastValue = (lastValue * 10) + value;
+    display.textContent = lastValue;
+  }
 }
 
 function updateDisplayOperator(op) {
   const display = document.querySelector(".display");
+  lastValue = null;
   display.textContent += op;
-}  
-function updateDisplayDigits(value){
-  const display = document.querySelector(".display");
-  if(display.textContent === '0') display.textContent = '';
-  firstOperand.value += (+value * firstOperand.multiplier);
-  firstOperand.multiplier *= 10;
-  display.textContent = firstOperand.value;
-}
+}   
 
-function updateDisplayOperator(op) {
+function removeOperator(){
   const display = document.querySelector(".display");
-  display.textContent += op;
-}  
-
-function resetOperand(operand){
-  operand.value = 0;
-  operand.multiplier = 1;
-  return;
+  newString = display.textContent;
+  newString = newString.split('');
+  newString.splice(-3,3);
+  display.textContent = newString.join('');
 }
 
 const ctrl_btns = document.querySelectorAll(".ctrl_btn.digit");
 const ctrl_operators = document.querySelectorAll(".ctrl_btn.operator");
 // Calculator variables
-let firstOperand, secondOperand, operator;
-firstOperand = {
-  value: 0,
-  multiplier: 1,
-};
+let firstOperand, secondOperand, operator, result, lastValue;
 
 // for each digit clicked, updateDisplay
 ctrl_btns.forEach(btn => {
   btn.addEventListener("click", btn => {
-    const displayValue = btn.target.getAttribute("value");
-    updateDisplayDigits(displayValue);
+    const digit = btn.target.getAttribute("value");
+    updateDisplayDigits(+digit);
+    const display = document.querySelector(".display");
+    firstOperand = +display.textContent;
   });
 });
 
 ctrl_operators.forEach(btn => {
   btn.addEventListener("click", btn => {
-    if(operator != undefined && operator != null) operate(firstOperand, secondOperand, operator);
-    secondOperand = firstOperand.value;
-    resetOperand(firstOperand);
+    // when clicked first time don't run operate
+    if(lastValue === null) {
+      operator = btn.target.getAttribute("value");
+      removeOperator();
+      updateDisplayOperator(operator);
+      return;
+    }
+    if(secondOperand != undefined) operate(firstOperand, secondOperand, operator);
+    else{
+      secondOperand = firstOperand;
+    }
     operator = btn.target.getAttribute("value");
     updateDisplayOperator(operator);
   });
