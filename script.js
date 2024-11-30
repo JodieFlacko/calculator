@@ -40,12 +40,19 @@ function clearCalculator(x, y){
 // Display functions
 function updateDisplayDigits(value){
   let display = document.querySelector(".display");
+  if(display.textContent === '0') display.textContent = '';
+  if(value === ".") {
+    if(display.textContent.split('').includes('.')) return;
+    display.textContent += value;
+    lastValue = display.textContent;
+    return;
+  }
   if(lastValue === undefined || lastValue === null) {
     display.textContent = value;
-    lastValue = +value;
+    lastValue = value;
   }
   else{
-    lastValue = (lastValue * 10) + value;
+    lastValue = lastValue + value;
     display.textContent = lastValue;
   }
 }
@@ -66,6 +73,7 @@ function removeOperator(){
 
 const ctrl_btns = document.querySelectorAll(".ctrl_btn.digit");
 const ctrl_operators = document.querySelectorAll(".ctrl_btn.operator");
+const decimal = document.querySelector(".decimal");
 // Calculator variables
 let firstOperand, secondOperand, operator, result, lastValue;
 
@@ -73,7 +81,7 @@ let firstOperand, secondOperand, operator, result, lastValue;
 ctrl_btns.forEach(btn => {
   btn.addEventListener("click", btn => {
     const digit = btn.target.getAttribute("value");
-    updateDisplayDigits(+digit);
+    updateDisplayDigits(digit);
     const display = document.querySelector(".display");
     firstOperand = +display.textContent;
   });
@@ -95,5 +103,9 @@ ctrl_operators.forEach(btn => {
     operator = btn.target.getAttribute("value");
     updateDisplayOperator(operator);
   });
+});
+
+decimal.addEventListener("click", btn => {
+  updateDisplayDigits(btn.target.getAttribute("value"));
 });
 
