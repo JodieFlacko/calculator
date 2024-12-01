@@ -8,6 +8,9 @@ function operate(x, y, op){
     break;
     case " x ": result = multiply(x, y);
     break;
+    case " % ": result = modulo(x, y);
+    break;
+    default: break;
   }
     firstOperand = result;
     signal = true;
@@ -34,8 +37,10 @@ function modulo(x, y){
   return x % y;
 }
 
-function clearCalculator(x, y){
-  return 0; 
+function clearCalculator(){
+  const display = document.querySelector(".display");
+  display.textContent = '0';
+  secondOperand = firstOperand = result = operator = null;
 }
 
 // Display functions
@@ -57,10 +62,10 @@ function updateSecondOperand(value) {
 const digitBtns = document.querySelectorAll(".ctrl_btn.digit");
 const ctrl_operators = document.querySelectorAll(".ctrl_btn.operator");
 const decimal = document.querySelector(".decimal");
+const clear = document.querySelector(".clear");
 // Calculator variables
 let firstOperand, secondOperand, operator, result, signal;
 firstOperand = null; 
-secondOperand = 0;
 signal = false;
 
 // for each digit clicked, updateDisplay
@@ -76,7 +81,7 @@ digitBtns.forEach(btn => {
 });
 
 ctrl_operators.forEach(btn => {
-  btn.addEventListener("click", btn => {    
+  btn.addEventListener("click", btn => {
     if(firstOperand != null){
       updateDisplayDigits(operate(firstOperand, secondOperand, operator));
       operator = btn.currentTarget.getAttribute("value");
@@ -94,3 +99,6 @@ decimal.addEventListener("click", btn => {
 
 });
 
+clear.addEventListener("click", () => {
+  clearCalculator();
+});
