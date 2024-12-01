@@ -12,6 +12,7 @@ function operate(x, y, op){
     break;
     default: break;
   }
+    if((result / 10000000000)  > 1) result = roundDecimals(result);
     firstOperand = result;
     signal = true;
     return result;
@@ -46,7 +47,9 @@ function clearCalculator(){
 // Display functions
 function updateDisplayDigits(value){
   const display = document.querySelector(".display");
-  if(display.textContent === '0') display.textContent = '';
+  displayContent = display.textContent;
+  if(displayContent.split('').includes('.') && value === '.') return; 
+  if(display.textContent === '0' && value != '.') display.textContent = '';
   if(signal === true) {
     display.textContent = '';
     signal = false;
@@ -57,6 +60,9 @@ function updateDisplayDigits(value){
 
 function updateSecondOperand(value) {
   secondOperand = value;
+}
+function roundDecimals(decimal){
+  return decimal.toFixed(10);
 }
 
 const digitBtns = document.querySelectorAll(".ctrl_btn.digit");
@@ -96,7 +102,8 @@ ctrl_operators.forEach(btn => {
 });
 
 decimal.addEventListener("click", btn => {
-
+  const dot = btn.currentTarget.getAttribute("value");
+  updateDisplayDigits(dot);
 });
 
 clear.addEventListener("click", () => {
