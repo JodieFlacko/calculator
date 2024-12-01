@@ -65,23 +65,29 @@ function checkDecimalButton(string){
   return string.split('').includes('.');
 }
 
+function removeDigit(string){
+  array = string.split('');
+  array.pop()
+  return array.join('');
+}
+
 const digitBtns = document.querySelectorAll(".ctrl_btn.digit");
 const ctrl_operators = document.querySelectorAll(".ctrl_btn.operator");
 const decimal = document.querySelector(".decimal");
 const clear = document.querySelector(".clear");
 const equal = document.querySelector(".equal");
+const backspace = document.querySelector(".backspace")
 // Calculator variables
 // If signal is true, it means display content needs to be emptied
 let firstOperand, secondOperand, operator, result, signal;
+firstTime = true;
 firstOperand = null; 
 signal = false;
 
 // for each digit clicked, updateDisplay
 digitBtns.forEach(btn => {
   btn.addEventListener("click", btn => {
-    // If result has already been calculated and clear button has not been clicked, it means the screen needs to be emptied
-
-    digit = btn.currentTarget.getAttribute("value");
+    const digit = btn.currentTarget.getAttribute("value");
     updateDisplayDigits(digit);
   });
 });
@@ -93,7 +99,6 @@ ctrl_operators.forEach(btn => {
       updateDisplayDigits(result);
       signal = true;
       operator = btn.currentTarget.getAttribute("value");
-      return; 
     }
     else{
       operator = btn.currentTarget.getAttribute("value");
@@ -120,4 +125,15 @@ equal.addEventListener("click", () =>{
     updateDisplayDigits(result);
     secondOperand = null;
   }
-})
+});
+
+backspace.addEventListener("click", () => {
+  signal = true;
+  const display = document.querySelector(".display");
+  string = removeDigit(display.textContent);
+  if (string === '') {
+    string = '0';
+  }
+
+  updateDisplayDigits(string);
+});
