@@ -10,12 +10,10 @@ function operate(x, y, op){
     break;
     case " % ": result = modulo(x, y);
     break;
-    default: break;
   }
     if((result / 10000000000)  > 1) result = roundDecimals(result);
     firstOperand = result;
     signal = true;
-    return result;
   }
 
 function add(x, y) {
@@ -41,16 +39,14 @@ function modulo(x, y){
 function clearCalculator(){
   const display = document.querySelector(".display");
   display.textContent = '0';
-  secondOperand = firstOperand = result = operator = null;
+  secondOperand = firstOperand = result = operator = signal = null;
 }
 
 // Display functions
 function updateDisplayDigits(value){
-  const display = document.querySelector(".display");
-  displayContent = display.textContent;
-  if(displayContent.split('').includes('.') && value === '.') return; 
+  const display = document.querySelector(".display");  
   if(display.textContent === '0' && value != '.') display.textContent = '';
-  if(signal === true) {
+  if(signal) {
     display.textContent = '';
     signal = false;
   }
@@ -65,11 +61,17 @@ function roundDecimals(decimal){
   return decimal.toFixed(10);
 }
 
+function checkDecimalButton(string){
+  return string.split('').includes('.');
+}
+
 const digitBtns = document.querySelectorAll(".ctrl_btn.digit");
 const ctrl_operators = document.querySelectorAll(".ctrl_btn.operator");
 const decimal = document.querySelector(".decimal");
 const clear = document.querySelector(".clear");
+const equal = document.querySelector(".equal");
 // Calculator variables
+// If signal is true, it means display content needs to be emptied
 let firstOperand, secondOperand, operator, result, signal;
 firstOperand = null; 
 signal = false;
@@ -77,10 +79,8 @@ signal = false;
 // for each digit clicked, updateDisplay
 digitBtns.forEach(btn => {
   btn.addEventListener("click", btn => {
-    if(result != null) {
-      signal = true;
-      result = null;
-    }
+    // If result has already been calculated and clear button has not been clicked, it means the screen needs to be emptied
+
     digit = btn.currentTarget.getAttribute("value");
     updateDisplayDigits(digit);
   });
@@ -89,7 +89,9 @@ digitBtns.forEach(btn => {
 ctrl_operators.forEach(btn => {
   btn.addEventListener("click", btn => {
     if(firstOperand != null){
-      updateDisplayDigits(operate(firstOperand, secondOperand, operator));
+      operate(firstOperand, secondOperand, operator)
+      updateDisplayDigits(result);
+      signal = true;
       operator = btn.currentTarget.getAttribute("value");
       return; 
     }
@@ -103,9 +105,19 @@ ctrl_operators.forEach(btn => {
 
 decimal.addEventListener("click", btn => {
   const dot = btn.currentTarget.getAttribute("value");
+  const display = document.querySelector(".display");
+  if(checkDecimalButton(display.textContent)) return;
   updateDisplayDigits(dot);
 });
 
 clear.addEventListener("click", () => {
   clearCalculator();
 });
+
+equal.addEventListener("click", () =>{
+  if(firstOperand != null && secondOperand != null){
+    operate(firstOperand, secondOperand, operator);
+    updateDisplayDigits(result);
+    secondOperand = null;
+  }
+})
