@@ -10,7 +10,8 @@ function operate(x, y, op){
     break;
     case " % ": result = modulo(x, y);
     break;
-  }
+  } 
+    // round long decimals
     if((result / 10000000000)  > 1) result = roundDecimals(result);
     firstOperand = result;
     signal = true;
@@ -46,8 +47,9 @@ function clearCalculator(){
 function updateDisplayDigits(value){
   const display = document.querySelector(".display");  
   if(display.textContent === '0' && value != '.') display.textContent = '';
-  if(+display.textContent / 1000000000000000 > 1) {
-    display.textContent = 'NaN';
+  // checks overflow
+  if(display.textContent.split('').length > 21) {
+    display.textContent = 'Error';
     firstOperand = null;
     secondOperand = null;
     signal = true;
@@ -143,6 +145,5 @@ backspace.addEventListener("click", () => {
   if (string === '') {
     string = '0';
   }
-
   updateDisplayDigits(string);
 });
