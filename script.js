@@ -46,6 +46,14 @@ function clearCalculator(){
 function updateDisplayDigits(value){
   const display = document.querySelector(".display");  
   if(display.textContent === '0' && value != '.') display.textContent = '';
+  if(+display.textContent / 1000000000000000 > 1) {
+    display.textContent = 'NaN';
+    firstOperand = null;
+    secondOperand = null;
+    signal = true;
+    return;
+  }
+
   if(signal) {
     display.textContent = '';
     signal = false;
@@ -124,6 +132,7 @@ equal.addEventListener("click", () =>{
     operate(firstOperand, secondOperand, operator);
     updateDisplayDigits(result);
     secondOperand = null;
+    signal = true;
   }
 });
 
